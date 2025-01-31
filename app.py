@@ -1,9 +1,9 @@
 from tools.weather import Get_Weather
 from tools.news import Get_News
 from tools.agenda.agenda import AgendaHandler
-from tools.agenda.agenda_tool import Agenda_Add_Meeting, Agenda_Remove_Meeting, Agenda_View_Complete, Agenda_View_Meeting_List
+from tools.agenda.agenda_tool import *
 from model_interaction.ollama import call_model
-
+from tools.tools_manager import ToolsManager
 
 def main():
     # handlers
@@ -17,16 +17,16 @@ def main():
     agenda_view_complete_tool = Agenda_View_Complete(agenda_handler)
     agenda_meeting_list_tool = Agenda_View_Meeting_List(agenda_handler)
 
-    all_tools = [
+    manager = ToolsManager([
         news_tool,
         weather_tool,
         agenda_add_meeting_tool,
         agenda_remove_tool, 
         agenda_view_complete_tool, 
         agenda_meeting_list_tool
-    ]
-    tools_dict = {tool.function_name: tool for tool in all_tools}
-    tools_config = [tool.config for tool in all_tools]
+    ]);
+    
+    tools_config = manager.get_all_configs()
 
     m = input("Your question : ")
     messages = [
@@ -42,20 +42,15 @@ def main():
             tool_name = tool_call['function']['name']
             arguments = tool_call['function']['arguments']
 
-            if tool_name in tools_dict:
-                tool_instance = tools_dict[tool_name]
+            if manager.has_tool(tool_name):
                 
-                function_response = tool_instance.call(arguments)
+                function_response = manager.call_tool(tool_name, arguments)
                 
-                messages.append({
-                    'role': 'tool',
-                    'content': function_response
-                })
+                messages.append({'role': 'tool', 'content': function_response})
                 
-                if tool_instance.wrap_output:
+                if manager.is_wrap_output(tool_name):
                     final_response = call_model(messages, tools_config)
-                    print("Final response from the model:\n", 
-                          final_response['message']['content'])
+                    print("Final response from the model:\n", final_response['message']['content'])
                 else:
                     print("Function response:", function_response)
             else:

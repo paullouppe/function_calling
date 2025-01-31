@@ -1,1 +1,12 @@
-[]
+[
+    {
+        "title": "r\u00e9union mensuelle",
+        "date": "2023-10-15",
+        "time": "14:00"
+    },
+    {
+        "title": "another event",
+        "date": "2025-02-15",
+        "time": "15:19"
+    }
+]

@@ -78,11 +78,10 @@ class Agenda_Remove_Meeting(Base_Tool):
     def call(self, arguments):
         return self._agenda_handler.remove_meeting(arguments.get('title', '').lower())
 
-
 class Agenda_View_Meeting_List(Base_Tool):
     def __init__(self, agenda_handler: AgendaHandler):
         self._agenda_handler = agenda_handler
-        self._wrap_output = True
+        self._wrap_output = False
         self._config = {
             'type': 'function',
             'function': {
@@ -107,11 +106,10 @@ class Agenda_View_Meeting_List(Base_Tool):
     def call(self, arguments):
         return self._agenda_handler.view_meeting_list()
 
-
 class Agenda_View_Complete(Base_Tool):
     def __init__(self, agenda_handler: AgendaHandler):
         self._agenda_handler = agenda_handler
-        self._wrap_output = True
+        self._wrap_output = False
         self._config = {
             'type': 'function',
             'function': {
